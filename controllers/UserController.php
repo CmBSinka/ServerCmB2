@@ -53,11 +53,13 @@ class UserController extends FunctionController
         $user=Yii::$app->user->identity; // Получить идентифицированного пользователя
         return $this->send(200, ['content'=> ['user'=>$user]]);
     }
-    public function  actionCabred()
+    public function  actionCabred($id)
     {    $request=Yii::$app->request->getBodyParams();
+        $user=User::findOne($id);
+        if (!$user) return $this->send(404,  ['content'=>['code'=>404, 'message'=>'Пользователь не найден']]);
         $user=Yii::$app->user->identity; // Получить идентифицированного пользователя
         if (isset($request['login'])) $user->login = $request['login'];
-        if (isset($request['password'])) $user->password = $request['password'];
+        if (isset($request['password'])) $user->password = $request['password']  = Yii::$app->getSecurity()->generatePasswordHash($user->password);
         if (isset($request['first_name'])) $user->first_name = $request['first_name'];
         if (isset($request['last_name'])) $user->last_name = $request['last_name'];
         if (isset($request['phone'])) $user->phone = $request['phone'];
@@ -65,8 +67,19 @@ class UserController extends FunctionController
 
         if (!$user->validate()) return $this->validation($user);
         $user->save();
-            return $this->send(204, ['content'=>['code'=>204, 'message'=>'Данные обновлены']]);
+            return $this->send(200, ['content'=>['code'=>200, 'message'=>'Данные обновлены']]);
 
+    }
+    public function actionSubscription($id)
+    {
+        $request=Yii::$app->request->getBodyParams();
+        $user=User::findOne($id);
+        if (!$user) return $this->send(404,  ['content'=>['code'=>404, 'message'=>'Пользователь не найден']]);
+        $user=Yii::$app->user->identity; // Получить идентифицированного пользователя
+        if (isset($request['subscription'])) $user->subscription = $request['subscription'];
+        if (!$user->validate()) return $this->validation($user);
+        $user->save();
+        return $this->send(200, ['content'=> ['code'=>200, 'Подписка'=>'Успешно оформлена']]);
     }
 }
 ?>

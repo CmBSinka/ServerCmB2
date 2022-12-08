@@ -62,13 +62,13 @@ $config = [
                 'POST register' => 'user/register',
                 'POST login' => 'user/login',
                 'GET user' => 'user/cab',
-                'POST order' => 'booking/order',
-                'PATCH redarkcab' => 'user/cabred',
-                'GET tickets' => 'flight/tickets',
-                'POST news' => 'user/subscription',
+                'POST booking/order/<id>' => 'booking/order',
+                'PATCH redarkcab/<id>' => 'user/cabred',
+                'GET flight/tickets' => 'flight/tickets',
+                'POST news/<id>' => 'user/subscription',
                 'POST createFlight' => 'flight/create',
-                'PATCH redarkFlight' => "flight/red",
-                'DELETE delFlight' => 'flight/del'
+                'PATCH flight/red/<id>' => "flight/red",
+                'DELETE flight/del/<id>' => 'flight/del'
 
             ],
         ],

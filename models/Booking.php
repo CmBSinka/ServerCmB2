@@ -1,6 +1,8 @@
 <?php
 
 namespace app\models;
+use yii\web\IdentityInterface;
+use yii\db\ActiveRecord;
 
 use Yii;
 
@@ -15,7 +17,7 @@ use Yii;
  * @property Flight $flight
  * @property User $user
  */
-class Booking extends \yii\db\ActiveRecord
+class Booking extends \yii\db\ActiveRecord implements IdentityInterface
 {
     /**
      * {@inheritdoc}
@@ -31,7 +33,7 @@ class Booking extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'flight_data'], 'required'],
+            [['flight_data'], 'required'],
             [['id', 'flight_id', 'user_id'], 'integer'],
             [['flight_data'], 'safe'],
             [['id'], 'unique'],
@@ -71,5 +73,45 @@ class Booking extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+    public static function findByLogin($login)
+    {
+        return static::findOne(['login' => $login]);
+    }
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['token' => $token]);
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAuthKey()
+    {
+        return ;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return ;
+    }
+    public function validatePassword($password)
+
+    {
+        $hash = Yii::$app->getSecurity()->generatePasswordHash($password);
+
+        if (Yii::$app->getSecurity()->validatePassword($password, $hash)) {
+            return $this;
+        } else {
+            return 0;
+        }
+
+
     }
 }
